@@ -29,10 +29,10 @@
   </insert>
   <sql id="conditions">
   	  <if test="userName != null">
-        and user_name = #{userName,jdbcType=VARCHAR},
+        and user_name = #{userName,jdbcType=VARCHAR}
       </if>
       <if test="passPharse != null">
-        and passpharse = #{passPharse,jdbcType=VARCHAR},
+        and passpharse = #{passPharse,jdbcType=VARCHAR}
       </if>
   </sql>
   
