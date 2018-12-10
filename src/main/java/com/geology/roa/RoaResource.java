@@ -12,9 +12,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.log4j.Logger;
+
 @Path("/res/v1")
 public class RoaResource
 {
+	private static final Logger LOGGER = Logger.getLogger(UserLogin.class);
 	@GET
 	@Path("/{id}")
 	@Produces(value = { MediaType.TEXT_PLAIN })
@@ -38,7 +41,7 @@ public class RoaResource
 					.build();
 		} catch (IOException e)
 		{
-			e.printStackTrace();
+			LOGGER.error("download failed IOException");
 		}
 
 		return rsp;
