@@ -8,7 +8,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jersey.version>2.6</jersey.version>
+		<jersey.version>2.22</jersey.version>
 		<jersey-spring.version>2.23.1</jersey-spring.version>
 		<spring.version>4.2.7.RELEASE</spring.version>
 	</properties>
@@ -61,7 +61,16 @@
 			<artifactId>jersey-entity-filtering</artifactId>
 			<version>${jersey.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.glassfish.jersey.bundles</groupId>
+			<artifactId>jaxrs-ri</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-common</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
 		<!-- Spring4.2 dependencies -->
 		<dependency>
 			<groupId>org.springframework</groupId>

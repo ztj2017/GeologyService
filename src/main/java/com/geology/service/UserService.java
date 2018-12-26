@@ -27,4 +27,18 @@ public class UserService
 
 		return userDao.queryByMap(conditionMap);
 	}
+	
+	public User getUserById(String id)
+	{
+		Map<String, Object> conditionMap = new HashMap<String, Object>();
+
+		conditionMap.put("id", id);
+		List<User> list =  userDao.queryByMap(conditionMap);
+		if(list.size() > 0)
+		{
+			return list.get(0);
+		}
+		return new User();
+	}
+	
 }

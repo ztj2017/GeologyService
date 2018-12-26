@@ -5,11 +5,14 @@
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
     <result column="passpharse" jdbcType="VARCHAR" property="passPharse" />
+    <result column="role_type" jdbcType="INTEGER" property="roleType" />
+    <result column="status" jdbcType="INTEGER" property="status" />
     <result column="login_time" jdbcType="BIGINT" property="loginTime" />
     <result column="extra_info" jdbcType="BIGINT" property="extraInfo" />
+    <result column="parent_id" jdbcType="VARCHAR" property="parentId" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_name, passpharse,login_time,extra_info
+    id, user_name, passpharse,role_type,status,login_time,extra_info,parent_id
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -21,18 +24,15 @@
     delete from tbl_users
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" parameterType="com.geology.model.User">
-    insert into tbl_users (id, user_name, passpharse,login_time,extra_info)
-    values (#{id,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{passPharse,jdbcType=VARCHAR}, #{loginTime,jdbcType=BIGINT},
-    #{extraInfo,jdbcType=VARCHAR}
-      )
-  </insert>
   <sql id="conditions">
   	  <if test="userName != null">
         and user_name = #{userName,jdbcType=VARCHAR}
       </if>
       <if test="passPharse != null">
         and passpharse = #{passPharse,jdbcType=VARCHAR}
+      </if>
+      <if test="id != null">
+        and id = #{id,jdbcType=VARCHAR}
       </if>
   </sql>
   

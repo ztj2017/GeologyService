@@ -17,6 +17,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -28,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.geology.model.User;
 import com.geology.service.UserService;
 import com.geology.utils.ErrorInfo;
@@ -70,28 +72,56 @@ public class UserLogin
 			ErrorInfo errorInfo = new ErrorInfo("E0002", "user name or password or code is empty.");
 			return Response.status(400).entity(JSON.toJSONString(errorInfo)).build();
 		}
-//		Object sessionCode = request.getSession().getAttribute("checkCode");
-//		if(sessionCode == null)
-//		{
-//			LOGGER.error("sessionCode is null.");
-//			ErrorInfo errorInfo = new ErrorInfo("E0002", "code has expired, refresh it.");
-//			return Response.status(400).entity(JSON.toJSONString(errorInfo)).build();
-//		}
-//		if(!user.getLoginCode().equals(sessionCode.toString()))
-//		{
-//			LOGGER.error("sessionCode is error.");
-//			ErrorInfo errorInfo = new ErrorInfo("E0002", "code is error.");
-//			return Response.status(400).entity(JSON.toJSONString(errorInfo)).build();
-//		}
+
 		List<User> uList = userServ.checkUser(user);
 		if(uList != null && uList.size() > 0 )
 		{
 			LOGGER.info("user login success.");
-			return Response.ok().build();
+			User u = uList.get(0);
+			HttpSession session = request.getSession();
+			session.setMaxInactiveInterval(60*5);
+			session.setAttribute(u.getId(), u);
+			JSONObject json = new JSONObject();
+			json.put("id", u.getId());
+			return Response.ok().entity(json).build();
 		}
-		LOGGER.error("ulogin failed. user is " + user.getUserName());
+		LOGGER.error("login failed. user is " + user.getUserName());
 		ErrorInfo errorInfo = new ErrorInfo("E0002", "login failed.");
 		return Response.status(400).entity(JSON.toJSONString(errorInfo)).build();
+	}
+	
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getUserById(@Context HttpServletRequest request, @PathParam("id") String userId)
+	{
+		LOGGER.info("enter get user by id, id= " + userId);
+		User u = userServ.getUserById(userId);
+		JSONObject json = new JSONObject();
+		json.put("id", u.getId());
+		json.put("userName", u.getUserName());
+		json.put("roleType", u.getRoleType());
+		json.put("parentId", u.getId());
+		if(u.getParentId() != null){
+			json.put("parentId", u.getParentId());
+		}
+		return Response.ok().entity(json).build();
+	}
+	
+	@GET
+	@Path("/check-session/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getSession(@Context HttpServletRequest request, @PathParam("id") String userId)
+	{
+		Object session = request.getSession().getAttribute(userId);
+		if(session == null)
+		{
+			LOGGER.error("sessionCode is null.");
+			ErrorInfo errorInfo = new ErrorInfo("E0002", "code has expired, refresh it.");
+			return Response.status(400).entity(JSON.toJSONString(errorInfo)).build();
+		}
+		LOGGER.info("check sesion success.");
+		return Response.ok().build();
 	}
 	
 	@GET
@@ -136,4 +166,5 @@ public class UserLogin
 		}
 		return new String(ch);
 	}
+	
 }

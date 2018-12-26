@@ -15,6 +15,9 @@ public class User implements Serializable
 	private String passPharse;
 	private Long loginTime;
 	private String extraInfo;
+	private Integer roleType = 0; // 0 查  1 增删改查 
+	private Integer status = 0; // 登陆状态
+	private String parentId;
 
 	public String getId()
 	{
@@ -64,6 +67,36 @@ public class User implements Serializable
 	public void setExtraInfo(String extraInfo)
 	{
 		this.extraInfo = extraInfo;
+	}
+
+	public Integer getRoleType()
+	{
+		return roleType;
+	}
+
+	public void setRoleType(Integer roleType)
+	{
+		this.roleType = roleType;
+	}
+
+	public Integer getStatus()
+	{
+		return status;
+	}
+
+	public void setStatus(Integer status)
+	{
+		this.status = status;
+	}
+
+	public String getParentId()
+	{
+		return parentId;
+	}
+
+	public void setParentId(String parentId)
+	{
+		this.parentId = parentId;
 	}
 
 }
