@@ -79,8 +79,8 @@ public class UserLogin
 			LOGGER.info("user login success.");
 			User u = uList.get(0);
 			HttpSession session = request.getSession();
-			session.setMaxInactiveInterval(60*5);
-			session.setAttribute(u.getId(), u);
+			session.setMaxInactiveInterval(60 * 30);
+			session.setAttribute("user", u);
 			JSONObject json = new JSONObject();
 			json.put("id", u.getId());
 			return Response.ok().entity(json).build();

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.geology.dao.SpotsMapper">
+  <resultMap id="BaseResultMap" type="com.geology.model.Spots">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="owner" jdbcType="VARCHAR" property="owner" />
+    <result column="park_id" jdbcType="VARCHAR" property="parkId" />
+    <result column="info" jdbcType="VARCHAR" property="info" />
+    <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+    <result column="extra" jdbcType="VARCHAR" property="extra" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name, owner,park_id,info,update_time,extra
+  </sql>
+  <insert id="insertSpot" parameterType="com.geology.model.Spots">
+    insert into tbl_scenic_spots (id, name, owner,park_id,info,update_time,extra)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR}, 
+      #{parkId,jdbcType=VARCHAR}, #{info,jdbcType=VARCHAR}, #{updateTime,jdbcType=BIGINT}, #{extra,jdbcType=VARCHAR}
+      )
+  </insert>
+  <select id="load" parameterType="java.lang.String" resultType="com.geology.model.Spots">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_scenic_spots
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from tbl_scenic_spots
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <sql id="conditions">
+  	  <if test="id != null">
+        and id = #{id,jdbcType=VARCHAR}
+      </if>
+      <if test="owner != null">
+        and owner = #{owner,jdbcType=VARCHAR}
+      </if>
+  </sql>
+  
+  <select id="getSpotsByConditions" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" />  from tbl_scenic_spots where 1 = 1 <include refid="conditions" /> order by update_time desc
+  	<if test="begin !=null and end !=null">
+  		limit ${begin}, ${end}
+  	</if>
+  </select>
+</mapper>

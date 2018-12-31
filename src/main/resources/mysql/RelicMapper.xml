@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.geology.dao.RelicMapper">
+  <resultMap id="BaseResultMap" type="com.geology.model.Relic">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="bh" jdbcType="VARCHAR" property="bh" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="coordinate" jdbcType="VARCHAR" property="coordinate" />
+    <result column="descr" jdbcType="VARCHAR" property="descr" />
+    <result column="category" jdbcType="VARCHAR" property="category" />
+    <result column="s_pic" jdbcType="VARCHAR" property="sPic" />
+    <result column="pic" jdbcType="VARCHAR" property="pic" />
+    <result column="scenic_spots_id" jdbcType="VARCHAR" property="scenicSpotsId" />
+    <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+    <result column="extra" jdbcType="VARCHAR" property="extra" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id,bh, name, coordinate,descr,category,s_pic,pic,scenic_spots_id,update_time,extra
+  </sql>
+  <select id="insertRelic" parameterType="com.geology.model.Relic" resultType="java.lang.Long">
+    call geology_service.get_insert_id(#{bh,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR}, #{coordinate,jdbcType=VARCHAR}, 
+      #{descr,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR}, #{sPic,jdbcType=VARCHAR}, #{pic,jdbcType=VARCHAR}, 
+      #{scenicSpotsId,jdbcType=VARCHAR},  #{updateTime,jdbcType=BIGINT}, #{extra,jdbcType=VARCHAR})
+  </select>
+  <select id="load" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_relic
+    where id = #{id,jdbcType=BIGINT} and scenic_spots_id = #{spotId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey">
+    delete from tbl_relic
+     where id = #{id,jdbcType=BIGINT} and scenic_spots_id = #{spotsId,jdbcType=VARCHAR}
+  </delete>
+  <update id="update" parameterType="com.geology.model.Relic">
+    update tbl_relic
+    <set>
+      <if test="bh != null">
+        bh = #{bh,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="coordinate != null">
+        coordinate = #{coordinate,jdbcType=VARCHAR},
+      </if>
+      <if test="descr != null">
+        descr = #{descr,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null">
+        category = #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="sPic != null">
+        s_pic = #{sPic,jdbcType=VARCHAR},
+      </if>
+      <if test="pic != null">
+        pic = #{pic,jdbcType=VARCHAR},
+      </if>
+      <if test="scenicSpotsIdForUpdate != null">
+        scenic_spots_id = #{scenicSpotsIdForUpdate,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT},
+      </if>
+      <if test="extra != null">
+        extra = #{extra,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT} and scenic_spots_id = #{scenicSpotsId,jdbcType=VARCHAR}
+  </update>
+  <sql id="conditions">
+      <if test="name != null">
+        and name = #{name,jdbcType=VARCHAR}
+      </if>
+      <if test="scenicSpotsId != null">
+        and scenic_spots_id = #{scenicSpotsId,jdbcType=VARCHAR}
+      </if>
+  </sql>
+  
+  <select id="getRelicByConditions" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" />  from tbl_relic where 1 = 1 <include refid="conditions" /> order by update_time desc
+  	<if test="begin !=null and end !=null">
+  		limit ${begin}, ${end}
+  	</if>
+  </select>
+  
+  <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
+  	select count(id)  from tbl_relic where 1 = 1 <include refid="conditions" />
+  </select>
+</mapper>
