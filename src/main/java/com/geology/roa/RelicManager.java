@@ -1,5 +1,7 @@
 package com.geology.roa;
 
+import java.io.File;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -17,6 +19,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.geology.model.Relic;
 import com.geology.service.RelicService;
@@ -59,6 +62,7 @@ public class RelicManager
 		return Response.status(200).entity(json).build();
 	}
 
+	// 更新遗址
 	@POST
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -83,6 +87,28 @@ public class RelicManager
 		relic.setUpdateTime(System.currentTimeMillis() + "");
 		relic.setId(Long.parseLong(id));
 		relicServ.updateRelic(relic);
+		try
+		{
+			if (relic.getDeleteImg() != null)
+			{
+				LOGGER.info("delete image file...");
+				String uploadRoot = getUploadPath(request.getSession().getServletContext().getRealPath(""));
+				JSONArray array = JSONArray.parseArray(relic.getDeleteImg());
+				for (int i = 0; i < array.size(); i++)
+				{
+					String imgPath = array.getString(0);
+					File imageFile = new File(uploadRoot + imgPath);
+					if (imageFile.exists())
+					{
+						imageFile.delete();
+						LOGGER.warn("delete image file = " + imageFile.getAbsolutePath());
+					}
+				}
+			}
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 		return Response.status(200).build();
 	}
 
@@ -95,7 +121,8 @@ public class RelicManager
 			@PathParam("id") String id)
 	{
 		Relic relic = relicServ.getRelicById(spotId, id);
-		if(relic == null){
+		if (relic == null)
+		{
 			return Response.status(400).build();
 		}
 		relic.setUpdateTime(DateUtils.stampToDate(relic.getUpdateTime()));
@@ -107,10 +134,17 @@ public class RelicManager
 	@Path("/{spotId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getRelicBySpot(@Context HttpServletRequest request, @PathParam("spotId") String spotId, @QueryParam("page") int page)
+	public Response getRelicBySpot(@Context HttpServletRequest request, @PathParam("spotId") String spotId,
+			@QueryParam("page") int page)
 	{
-		
+
 		JSONObject json = relicServ.getRelicByConditions(spotId, page);
 		return Response.ok().entity(json).build();
+	}
+
+	private String getUploadPath(String ss)
+	{
+		int index = ss.indexOf("webapps");
+		return ss.substring(0, index + "webapps".length());
 	}
 }

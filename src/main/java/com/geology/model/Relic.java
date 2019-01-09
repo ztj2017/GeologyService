@@ -22,6 +22,15 @@ public class Relic implements Serializable
 	private String scenicSpotsIdForUpdate;
 	private String updateTime;
 	private String extra;
+	private String deleteImg;
+	public String getDeleteImg()
+	{
+		return deleteImg;
+	}
+	public void setDeleteImg(String deleteImg)
+	{
+		this.deleteImg = deleteImg;
+	}
 	public Long getId()
 	{
 		return id;

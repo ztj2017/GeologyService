@@ -59,6 +59,7 @@ public class UploadImage
 				return Response.ok(obj, MediaType.APPLICATION_JSON).status(400).entity(obj).build();
 			}
 			String uploadRoot = getUploadPath(request.getSession().getServletContext().getRealPath(""));
+			//userId/2019-1-12/1546176526674.jpg 哪种好
 			String mkPath = "/upload/" + userId + "/" + spotId + "/" + relicId + "/";
 			String uploadPath = uploadRoot + mkPath;
 			File file = new File(uploadPath);
